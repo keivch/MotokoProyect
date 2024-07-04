@@ -17,7 +17,12 @@ module {
   propietario: Text;
   var saldo: Nat;
   var tokens: [token];
-};
+  };
+
+  public type user ={
+    var id : Principal;
+    var wallet : wallet;
+  }
 
 
 

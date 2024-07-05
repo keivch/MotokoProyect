@@ -13,7 +13,7 @@ actor {
 
 
 
-  public func newUser(userId : Principal) : async Result.Result<Text, Text> {
+  public func m1_newUser(userId : Principal) : async Result.Result<Text, Text> {
     for (user in users.vals()) {
       if (user.id == userId) {
         return #err("ya existe este usuario");
@@ -34,7 +34,7 @@ actor {
     return #ok("usuario registrado");
   };
 
-  public func tokenizarPropiedad(codigo : Nat, ubicacion : Text, valor : Nat, descripcion : Text, cant_tokens : Nat) : async Result.Result<Text, Text> {
+  public func m2_tokenizarPropiedad(codigo : Nat, ubicacion : Text, valor : Nat, descripcion : Text, cant_tokens : Nat) : async Result.Result<Text, Text> {
     for (propiedad in propiedades.vals()) {
       if (codigo == propiedad.codigo_inmobiliario) {
         return #err("ya existe una propiedad con este codigo");
@@ -52,7 +52,7 @@ actor {
     return #ok("Propiedad tokenizada correctamente");
   };
 
-  public query func verPropiedades() : async Text {
+  public query func m3_verPropiedades() : async Text {
     var propiedadesTexto : Text = "";
     for (propiedad in propiedades.vals()) {
       propiedadesTexto #= "Código Inmobiliario: " # debug_show (propiedad.codigo_inmobiliario) # "\n" #
@@ -64,7 +64,7 @@ actor {
     return propiedadesTexto;
   };
 
-  public func comprarToken(codigo : Nat, cantidad : Nat, userId : Principal) : async Result.Result<Text, Text> {
+  public func m4_comprarToken(codigo : Nat, cantidad : Nat, userId : Principal) : async Result.Result<Text, Text> {
     for (user in users.vals()) {
       if (user.id == userId) {
         for (propiedad in propiedades.vals()) {
@@ -98,7 +98,7 @@ actor {
     return #ok("compra realizada correctamente");
   };
 
-  public query func verMiWallet(userId : Principal) : async Text {
+  public query func m5_verMiWallet(userId : Principal) : async Text {
     var mensaje : Text = "";
     for (user in users.vals()) {
       if (user.id == userId) {
@@ -116,7 +116,7 @@ actor {
     return mensaje;
   };
 
-   public func venderMisTokens(codigoToken: Nat, userId: Principal): async Result.Result<Text, Text> {
+   public func m6_venderMisTokens(codigoToken: Nat, userId: Principal): async Result.Result<Text, Text> {
     var usuarioEncontrado: ?types.user = null;
 
     // Buscar el usuario

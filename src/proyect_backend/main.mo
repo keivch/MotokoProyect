@@ -65,37 +65,48 @@ actor {
   };
 
   public func m4_comprarToken(codigo : Nat, cantidad : Nat, userId : Principal) : async Result.Result<Text, Text> {
+    var usuarioEncontrado = false;
+    var propiedadEncontrada = false;
+
     for (user in users.vals()) {
       if (user.id == userId) {
+        usuarioEncontrado := true;
         for (propiedad in propiedades.vals()) {
-          if (cantidad > propiedad.tokens) {
-            return #err("No hay suficientes tokens");
-          };
-          if (cantidad > user.wallet.saldo) {
-            return #err("no tienes saldo suficiente");
-          };
           if (codigo == propiedad.codigo_inmobiliario) {
+            propiedadEncontrada := true;
+
+            if (cantidad > propiedad.tokens) {
+              return #err("No hay suficientes tokens");
+            };
+            if (cantidad > user.wallet.saldo) {
+              return #err("No tienes saldo suficiente");
+            };
+
             propiedad.tokens := propiedad.tokens - cantidad;
             var count = 0;
             for (i in Iter.range(1, cantidad)) {
               let newToken : types.token = {
                 codigo = codigos;
-                nombre = "token propiedad " #debug_show (propiedad.codigo_inmobiliario);
+                nombre = "token propiedad " # debug_show(propiedad.codigo_inmobiliario);
               };
               count := count + 1;
-              user.wallet.tokens := Array.append(user.wallet.tokens, [newToken]);
               user.wallet.saldo := user.wallet.saldo - 1;
-              codigos := codigos +1;
+              codigos := codigos + 1;
+              user.wallet.tokens := Array.append(user.wallet.tokens, [newToken]);
             };
-          } else {
-            return #err("no existe inmueble con el codigo proporcionado");
+            
+            return #ok("Compra realizada correctamente");
           };
         };
-      } else {
-        return #err("usuario no registrado");
+        if ( not propiedadEncontrada) {
+          return #err("No existe inmueble con el código proporcionado");
+        };
       };
     };
-    return #ok("compra realizada correctamente");
+    if (not usuarioEncontrado) {
+      return #err("Usuario no registrado");
+    };
+    return #ok("Compra realizada correctamente");
   };
 
   public query func m5_verMiWallet(userId : Principal) : async Text {
